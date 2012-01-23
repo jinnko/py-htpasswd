@@ -13,6 +13,7 @@ import cgi
 import string
 import random
 import crypt
+import hashlib
 
 # ENABLE FOR DEBUGING
 #import cgitb
@@ -33,9 +34,11 @@ print '''<html><head>
     </head>
     <body onload="document.forms.htpasswd.username.focus()">
 
+    <table align="center">
+        <tr>
+            <td valign="top" style="padding-right: 3em;">
     <h1>py-htpasswd</h1>
-    <p>Generate crypt'd passwords for use in htpasswd files, haproxy, nginx, etc.</p>
-
+    <p>Generate crypt'd passwords for use <br />in htpasswd files, haproxy, nginx, etc.</p>
     <form method=post id=htpasswd>
         <table><tr>
             <th>username:</th>
@@ -75,6 +78,11 @@ if "username" in form and "password" in form and "password2" in form:
         salt = ''.join(random.choice(charset) for x in range(salt_len))
         print("<p>%s: <strong>%s:%s</strong></p>" % (pw_hash, username, crypt.crypt(pw1, salt_prefix + salt)))
 
+        pw_hash = "SHA1"
+        salt_len = 16
+        salt = ''.join(random.choice(charset) for x in range(salt_len))
+        print("<p>%s: <strong>%s %s salt(%s)</strong></p>" % (pw_hash, username, hashlib.sha1(pw1 + salt).hexdigest(), salt))
+
         pw_hash = "SHA256"
         salt_len = 16
         salt_prefix = '$5$rounds=5131$'
@@ -92,11 +100,23 @@ if "username" in form and "password" in form and "password2" in form:
 else:
     print "<strong>No data provided.</strong>"
 
+    print """
+            </td>
+            <td>
+                <a href="http://xkcd.com/936/"><img src="http://imgs.xkcd.com/comics/password_strength.png" /></a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2>
+    """
 
 print '<hr />'
 print '<p><a href="https://github.com/jinnko/py-htpasswd">py-htpasswd</a> executed in {0:.4f} seconds.</p>'.format(time.time() - start)
 
 print '''
+        </td>
+    </tr>
+</table>
 </body>
 </html>
 '''
