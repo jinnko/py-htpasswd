@@ -37,6 +37,7 @@ if "username" in form and "password" in form and "password2" in form:
 
         # Define our random characters that make up our salt
         charset = string.ascii_lowercase + string.ascii_uppercase + string.digits + "./"
+        charset_hex = "abcdef" + string.digits
 
         # Crypt
         salt2 = ''.join(random.choice(charset) for x in range(2))
@@ -51,10 +52,11 @@ if "username" in form and "password" in form and "password2" in form:
 
         # SHA1
         pw_hash = "SHA1"
-        salt_len = 16
-        salt = ''.join(random.choice(charset) for x in range(salt_len))
+        salt_len = 32
+        salt = ''.join(random.choice(charset_hex) for x in range(salt_len))
         passes['sha1'] = {}
-        passes['sha1']['pass'] = hashlib.sha1(pw1 + salt).hexdigest()
+        hashed_password = hashlib.sha1(pw1).hexdigest()
+        passes['sha1']['pass'] = hashlib.sha1(salt + hashed_password).hexdigest()
         passes['sha1']['salt'] = salt
 
         # SHA256
