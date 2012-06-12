@@ -4,6 +4,7 @@
 # @since 2011-09-14
 # @url https://github.com/jinnko/py-htpasswd
 #
+# vim:set ts=4 sw=4 sts=4 expandtab fileencoding=utf8:
 
 import time
 start = time.time()
@@ -43,12 +44,18 @@ if "username" in form and "password" in form and "password2" in form:
         salt2 = ''.join(random.choice(charset) for x in range(2))
         passes['crypt'] = crypt.crypt(pw1, salt2)
 
-        # MD5
+        # CRPYT_MD5
         pw_hash = "MD5"
         salt_len = 16
         salt_prefix = '$1$'
         salt = ''.join(random.choice(charset) for x in range(salt_len))
-        passes['md5'] = crypt.crypt(pw1, salt_prefix + salt)
+        passes['crypt_md5'] = {}
+        passes['crypt_md5']['pass'] = crypt.crypt(pw1, salt_prefix + salt)
+        passes['crypt_md5']['salt'] = salt
+
+        # MD5
+        pw_hash = "MD5"
+        passes['md5'] = hashlib.md5(pw1).hexdigest()
 
         # SHA1
         pw_hash = "SHA1"
