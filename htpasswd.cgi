@@ -13,6 +13,7 @@ import string
 import random
 import crypt
 import hashlib
+import bcrypt
 import json
 
 # ENABLE FOR DEBUGING
@@ -79,6 +80,11 @@ if "username" in form and "password" in form and "password2" in form:
         salt_prefix = '$6$rounds=5131$'
         salt = ''.join(random.choice(charset) for x in range(salt_len))
         passes['sha512'] = crypt.crypt(pw1, salt_prefix + salt)
+
+        # BCrypt
+        pw_hash = "bcrypt"
+        # use gensalt() default of 12 rounds
+        passes['bcrypt'] = bcrypt.hashpw(pw1, bcrypt.gensalt())
 
     else:
         status = 2
